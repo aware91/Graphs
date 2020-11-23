@@ -71,6 +71,21 @@ class SocialGraph:
         extended network with the shortest friendship path between them.
         The key is the friend's ID and the value is the path.
         """
+        """
+        Mari's Code example
+        visited = {}
+        queue = deque()
+        queue.append([user_id])
+        while len(queue) > 0:
+            currPath = queue.popleft()
+            currNode = currPath[-1]
+            visited[currNode] = currPath
+            for friend in self.friendships[currNode]:
+                if friend not in visited:
+                newPath = currPath.copy()
+                newPath.append(friend)
+                queue.append(newPath)
+        """
         visited = {}  # Note that this is a dictionary, not a set
         queue = deque()
         queue.append([user_id])
@@ -89,6 +104,40 @@ class SocialGraph:
         
         return visited
 
+    # Returns True if user_ed and friend_id have successfully been added as friends
+    def add_friendship_linear(self, user_id, friend_id):
+        if user_id == friend_id:
+            return False
+        # Check if friend_id and user_id are not already firends with each other
+        elif friend_id in self.friendships[user_id] or user_id in self.friendships[friend_id]:
+            return False
+        else:
+            self.friendships[user_id].add(friend_id)
+            self.friendships[friend_id].add(user_id)
+            return True
+    
+    def populate_graph_linear(self, num_users, avg_friendships):
+        self.last_id = 0
+        self.users = {}
+        self.friendships = {}
+        
+        # add users into the graph
+        for n in range(num_users):
+            self.add_user(f'user {n}')
+        
+        # Create random friendships until we've hit target number of friendships
+        target_friendships = num_users * avg_friendships
+        total_friendships = 0
+        collistions = 0
+        while total_friendships < target_friendships:
+            user_id = random.randint(1, self.last_id)
+            friend_id = random.randint(1, self.last_id)
+            if self.add_friendship_linear(user_id, friend_id):
+                total_friendships += 2
+            else:
+                collisions += 1
+            # keep adding friendships
+        print(f"Collisions: {collistions")
 
 if __name__ == '__main__':
     sg = SocialGraph()
